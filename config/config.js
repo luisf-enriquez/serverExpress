@@ -10,7 +10,11 @@ module.exports = {
 		databaseURL:
 		process.env.databaseURL || 'https://ndcea-e0fa8.firebaseio.com/',
 		entorno: process.env.entorno || 'local',
-
+		mongodb:
+			process.env.mongodb ||
+			'mongodb+srv://luisenriquezaio:outfield1@cluster0.xsxbj.mongodb.net/heroData?retryWrites=true&w=majority',
+		expToken: process.env.expToken || '420h',
+		secret: process.env.secret || 'secret-dev',
 	},
 	consultas: {
 		puerto_server_android: '/controlador_datos',
@@ -44,5 +48,10 @@ module.exports = {
 	},
 	storage: {
 		bucket: process.env.bucketDocumentos || 'archivos-test',
+	},
+	apiKey: {
+		google_client_id: process.env.google_client_id || '142268926446-nhb70bc5alqjjmg4f3ba2ri8dgvt1ugn.apps.googleusercontent.com',
+		key: 'AIzaSyCpbNSbd30t2W-QZL9IbwSSdGdNVsoxGC8',
+		weatherKey: '96c382fe98089c509d81024ab90dd2bb',
 	},
 };

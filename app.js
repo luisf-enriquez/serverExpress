@@ -1,9 +1,15 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const config = require('./config/config');
 const pruebas = require('./routes/pruebas');
+const categorias = require('./routes/categorias');
+const producto = require('./routes/producto');
+const login = require('./routes/login');
+const upload = require('./routes/upload');
+const imagenes = require('./routes/imagenes');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -27,15 +33,30 @@ app.use((req, res, next) => {
   next();
 });
 
+// habilitar el public
+app.use(express.static(path.join(__dirname, '/public')));
+
 // Routes
 app.use('/pruebas', pruebas);
+app.use('/login', login);
+app.use('/categorias', categorias);
+app.use('/producto', producto);
+app.use('/upload', upload);
+app.use('/imagenes', imagenes);
 
 // Custom 404 route not found handler
 app.use((req, res) => {
-    res.status(404).json({
-      status: 404,
-      message: 'No existe la ruta',
-    });
+  res.status(404).json({
+    status: 404,
+    message: "No existe la ruta",
   });
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    status: 500,
+    message: "Hubo un error",
+  });
+});
 
 module.exports = app;
