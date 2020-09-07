@@ -3,13 +3,14 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 
+const { handleError } = require('./config/utils');
 const config = require('./config/config');
-const pruebas = require('./routes/pruebas');
-const categorias = require('./routes/categorias');
-const producto = require('./routes/producto');
-const login = require('./routes/login');
-const upload = require('./routes/upload');
-const imagenes = require('./routes/imagenes');
+// const pruebas = require('./routes/pruebas');
+// const categorias = require('./routes/categorias');
+// const producto = require('./routes/producto');
+// const login = require('./routes/login');
+// const upload = require('./routes/upload');
+// const imagenes = require('./routes/imagenes');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -37,12 +38,19 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, '/public')));
 
 // Routes
-app.use('/pruebas', pruebas);
-app.use('/login', login);
-app.use('/categorias', categorias);
-app.use('/producto', producto);
-app.use('/upload', upload);
-app.use('/imagenes', imagenes);
+app.use(require('./routes/index'));
+// app.use('/pruebas', pruebas);
+// app.use('/login', login);
+// app.use('/categorias', categorias);
+// app.use('/producto', producto);
+// app.use('/upload', upload);
+// app.use('/imagenes', imagenes);
+
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Hello World'
+  })
+});
 
 // Custom 404 route not found handler
 app.use((req, res) => {
@@ -52,11 +60,18 @@ app.use((req, res) => {
   });
 });
 
+// route 500 Express-joi-Validator
 app.use((err, req, res, next) => {
-  res.status(500).json({
-    status: 500,
-    message: "Hubo un error",
-  });
+  if (!err.statusCode) err.statusCode = 400;
+  handleError(err, res);
 });
+
+// app.use((err, req, res, next) => {
+//   res.status(500).json({
+//     status: 500,
+//     err,
+//     message: "Internal server error",
+//   });
+// });
 
 module.exports = app;

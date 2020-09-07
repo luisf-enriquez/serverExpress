@@ -9,9 +9,11 @@ const config = require('../../config/config');
 
 const saveOne = async data => {
     try {
-        return await data.save();
+        const result = await data.save();
+        return { result, ok: true };
     } catch (error) {
         console.log(error);
+        return { result: null , ok: false, err: error };
     }
 };
 
@@ -29,7 +31,7 @@ const findAllByKey = async (query = {}) => {
 
 const updateById = async (id, data) => {
     try {
-        return await Usuario.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+        return await Usuario.findByIdAndUpdate(id, data, { new: true, runValidators: false });
     } catch (error) {
         console.log(error);
         return error
@@ -80,12 +82,34 @@ const uploadFile = async (res, id, filename, tipo) => {
         console.log(error);
         throw new Error(err);
     }
-} 
+};
+
+const findById = async (id) => {
+    try {
+        const result = await Usuario.findById(id);
+        return { result, ok: true };
+    } catch (error) {
+        // console.log(error);
+        return { result: null , ok: false, err: error };
+    }
+};
+
+const deleteById = async (id) => {
+    try {
+        const result = await Usuario.findByIdAndDelete(id, { sort: {'nombre' : 1}});
+        return  { result, ok: true };
+    } catch (error) {
+        console.log(error);
+        return { result: null , ok: false, err: error };
+    }
+};
 
 module.exports = {
     saveOne,
     findAllByKey,
     updateById,
     findUser,
-    uploadFile
+    uploadFile,
+    findById,
+    deleteById
 }

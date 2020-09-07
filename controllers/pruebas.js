@@ -1,6 +1,7 @@
 const axios = require('axios');
 const bcrypt = require('bcrypt');
 const moment = require('moment-timezone');
+const jwt =  require('jsonwebtoken');
 
 const utils = require('../config/utils');
 const create = require('../models/create');
@@ -37,12 +38,16 @@ module.exports.createUser = async (res, data, next) => {
             google: data.google,
             estado: data.estado,
         });
-        let result = await modelMongo.saveOne(user);
-        utils.buildResponse(res, 201, result, 'Registro creado exitosamente');
+        let response = await modelMongo.saveOne(user);
+        if (response.ok) {
+            utils.buildResponse(res, 201, {user: response.result}, 'Registro creado exitosamente');
+        } else {
+            utils.buildResponse(res, 500, { err: response.err.message }, 'Error durante el registro');
+        }
     } catch (error) {
         console.log(error);
         next(error);
-        utils.buildResponse(res, 500, { error: error.message }, 'Se ha generado un error durante el registro');
+        // utils.buildResponse(res, 500, { error: error.message }, 'Se ha generado un error durante el registro');
     }
 };
 
@@ -56,11 +61,27 @@ module.exports.getAllUsers = async (res, data) => {
     }
 };
 
-module.exports.updateUser = async (res, data, next) => {
+module.exports.getUserById = async (req, res , next) => {
     try {
-        let updateBody = {...data};
+        let id = req.params.id;
+        const response = await modelMongo.findById(id);
+        if (response.result !== null && response.ok === true ){
+            utils.buildResponse(res, 200, { user: response.result }, 'Usuario encontrado');
+        } else if (response.result === null && response.ok === true){
+            utils.buildResponse(res, 200, [], 'No existe un usuario para el id dado');
+        } else if (response.ok === false){
+            utils.buildResponse(res, 500, { err: response.err.kind, value:response.err.value }, 'Problema en la solicutd');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports.updateUser = async (req, res, next) => {
+    try {
+        let updateBody = {...req.body};
         delete updateBody.id;
-        const result = await modelMongo.updateById(data.id, updateBody)
+        const result = await modelMongo.updateById(req.params.id, updateBody)
         utils.buildResponse(res, 200, result, 'Documento Actualizado con exito')
     } catch (error) {
         console.log(error);
@@ -103,6 +124,28 @@ module.exports.uploadFile = async (res, req, next) => {
         next(error);   
     }
 };
+
+module.exports.deleteUser = async (req, res, next) => {
+    try {
+        let id = req.params.id;
+        const response =  await modelMongo.deleteById(id);
+        if (response.result !== null && response.ok) {
+            utils.buildResponse(res, 200, { user: response.result }, 'Documento eliminado');
+        } else if (response.result === null && response.ok) {
+            utils.buildResponse(res, 200, { user: [] }, 'No existe un usuario para el id dado');
+        } else {
+            utils.buildResponse(res, 500, { err: response.err.kind, value:response.err.value }, 'Error en la solicitud');
+        }
+    } catch (error) {
+        console.log(error);
+        next(error);  
+    }
+}
+
+module.exports.getToken = (req, res) => {
+    var token = jwt.sign({role: 'ADMIN_ROLE'}, config.parametros.secret);
+    res.send({ token });
+}
 
 // ****************** Consultas Axios ***********************
 

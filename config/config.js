@@ -13,6 +13,7 @@ module.exports = {
 		mongodb:
 			process.env.mongodb ||
 			'mongodb+srv://luisenriquezaio:outfield1@cluster0.xsxbj.mongodb.net/heroData?retryWrites=true&w=majority',
+		testdb: 'mongodb+srv://luisenriquezaio:outfield1@cluster0.xsxbj.mongodb.net/testDB?retryWrites=true&w=majority',
 		expToken: process.env.expToken || '420h',
 		secret: process.env.secret || 'secret-dev',
 	},
