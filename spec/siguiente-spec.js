@@ -10,9 +10,9 @@ describe('siguiente', function() { // el describe recibe dos parametros, el modu
         expect(value).toBe(4);
     });
 
-    it('El siguiente de -2 es -1', function(){
-        expect(app.siguiente(-2)).toBe(-1);
-    });
+    // it('El siguiente de -2 es -1', function(){
+    //     expect(app.siguiente(-2)).toBe(-1);
+    // });
 });
 
 describe('add', function(){

@@ -29,7 +29,7 @@ const user = {
 
 const update = {
     body: {
-        id: Joi.string().required(),
+        id: Joi.string().allow(null, ''),
         nombre: Joi.string().allow(null,''),
         email: Joi.string().allow(null,''),
         role: Joi.string().allow(null, ''),
